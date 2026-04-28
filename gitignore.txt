@@ -1,0 +1,44 @@
+# dependencies
+node_modules
+.pnp
+.pnp.js
+
+# build output
+dist
+build
+*.tsbuildinfo
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# env
+.env
+.env.local
+.env.*.local
+
+# editor
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea
+*.swp
+.DS_Store
+Thumbs.db
+
+# vercel
+.vercel
+
+# Replit-specific (kept out of Vercel deploy)
+.replit
+.replitignore
+.cache/
+.local/
+.agents/
+.upm/
+.config/
+replit.md
