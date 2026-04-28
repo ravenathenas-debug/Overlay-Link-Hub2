@@ -13,7 +13,7 @@ import LZString from "lz-string";
 type Aspect = "16:9" | "9:16";
 const ASPECT_STORAGE_KEY = "stack-overlay:aspect";
 
-const MAX_BG_FILE_BYTES = 4 * 1024 * 1024;
+const MAX_BG_FILE_BYTES = 20 * 1024 * 1024;
 
 export default function SetupPage() {
   const { layers, addLayer, updateLayer, removeLayer, duplicateLayer, moveLayerUp, moveLayerDown, background, setBackground } = useLayers();
@@ -29,10 +29,17 @@ export default function SetupPage() {
   const { toast } = useToast();
 
   const handleBackgroundFile = (file: File) => {
-    if (!file.type.startsWith("image/")) {
-      toast({ title: "Unsupported file", description: "Please choose an image or GIF.", variant: "destructive" });
-      return;
-    }
+    if (
+  !file.type.startsWith("image/") &&
+  !file.type.startsWith("video/")
+) {
+  toast({
+    title: "Unsupported file",
+    description: "Please choose an image or video.",
+    variant: "destructive"
+  });
+  return;
+  }
     if (file.size > MAX_BG_FILE_BYTES) {
       toast({
         title: "File too large",
@@ -177,7 +184,7 @@ export default function SetupPage() {
             <input
               ref={bgFileInputRef}
               type="file"
-              accept="image/*,image/gif"
+              accept="image/*,video/mp4,video,/webm"
               className="hidden"
               onChange={(e) => {
                 const file = e.target.files?.[0];
