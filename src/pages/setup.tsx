@@ -676,6 +676,7 @@ function PreviewCanvas({ layers, updateLayer, aspect, setAspect, background }: P
                       height: `${10000 / zoom}%`,
                       transform: `scale(${zoom / 100})`,
                       transformOrigin: "0 0",
+                      willChange: "transform",
                     }}
                   />
                 </div>
@@ -715,7 +716,7 @@ function clamp(n: number, min: number, max: number) {
   return Math.max(min, Math.min(max, n));
 }
 
-function InteractiveLayer({
+const InteractiveLayer = React.memo(function InteractiveLayer({
   layer,
   canvasRef,
   isActive,
@@ -725,6 +726,7 @@ function InteractiveLayer({
 }: InteractiveLayerProps) {
   const snapRef = useRef(snap);
   snapRef.current = snap;
+  const frame = useRef<number | null>(null);
   const snapVal = (n: number) =>
     snapRef.current ? Math.round(n / GRID_STEP) * GRID_STEP : n;
   const startRef = useRef<{
@@ -856,12 +858,18 @@ function InteractiveLayer({
         }
       }
 
-      updateLayer(layer.id, {
-        x: Math.round(x * 10) / 10,
-        y: Math.round(y * 10) / 10,
-        width: Math.round(width * 10) / 10,
-        height: Math.round(height * 10) / 10,
-      });
+      if (frame.current) cancelAnimationFrame(frame.current);
+
+frame.current = requestAnimationFrame(() => {
+  updateLayer(layer.id, {
+    x: Math.round(x * 10) / 10,
+    y: Math.round(y * 10) / 10,
+    width: Math.round(width * 10) / 10,
+    height: Math.round(height * 10) / 10,
+  });
+});
+
+      
     },
     [layer.id, updateLayer]
   );
@@ -884,9 +892,9 @@ function InteractiveLayer({
 
   return (
     <div
-      className={`absolute select-none touch-none ${
-        isActive ? "ring-2 ring-primary" : "ring-1 ring-primary/40"
-      }`}
+      className={`absolute select-none touch-none will-change-transform ${
+  isActive ? "ring-2 ring-primary" : "ring-1 ring-primary/40"
+}`}
       style={{
         left: `${layer.x}%`,
         top: `${layer.y}%`,
