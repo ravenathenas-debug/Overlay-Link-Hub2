@@ -562,13 +562,24 @@ function PreviewCanvas({ layers, updateLayer, aspect, setAspect, background }: P
           }}
         >
           {background && (
-            <img
-              src={background}
-              alt=""
-              className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none"
-              draggable={false}
-            />
-          )}
+  background.startsWith("data:video") || background.endsWith(".mp4") || background.endsWith(".webm") ? (
+    <video
+      src={background}
+      autoPlay
+      loop
+      muted
+      playsInline
+      className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none"
+    />
+  ) : (
+    <img
+      src={background}
+      alt=""
+      className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none"
+      draggable={false}
+    />
+  )
+)}
 
           {snap && (
             <div
@@ -622,13 +633,24 @@ function PreviewCanvas({ layers, updateLayer, aspect, setAspect, background }: P
             }`}
           >
             {background && (
-              <img
-                src={background}
-                alt=""
-                className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none"
-                draggable={false}
-              />
-            )}
+  background.startsWith("data:video") || background.endsWith(".mp4") || background.endsWith(".webm") ? (
+    <video
+      src={background}
+      autoPlay
+      loop
+      muted
+      playsInline
+      className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none"
+    />
+  ) : (
+    <img
+      src={background}
+      alt=""
+      className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none"
+      draggable={false}
+    />
+  )
+)}
             {layers.filter((l) => l.visible).map((layer) => {
               const zoom = layer.zoom ?? 100;
               const rotation = layer.rotation ?? 0;
