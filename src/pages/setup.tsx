@@ -412,6 +412,34 @@ const GRID_STEP = 5;
 
 type Preset = "tl" | "tr" | "center" | "bl" | "br" | "fill";
 
+const Background = React.memo(({ src }: { src: string }) => {
+  if (!src) return null;
+
+  if (
+    src.startsWith("data:video") ||
+    src.endsWith(".mp4") ||
+    src.endsWith(".webm")
+  ) {
+    return (
+      <video
+        src={src}
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+      />
+    );
+  }
+
+  return (
+    <img
+      src={src}
+      alt=""
+      className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+    />
+  );
+});
 function PreviewCanvas({ layers, updateLayer, aspect, setAspect, background }: PreviewCanvasProps) {
   const canvasRef = useRef<HTMLDivElement>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -561,37 +589,7 @@ function PreviewCanvas({ layers, updateLayer, aspect, setAspect, background }: P
             if (e.target === e.currentTarget) setActiveId(null);
           }}
         >
-          {background && (
-  background.startsWith("data:video") || background.endsWith(".mp4") || background.endsWith(".webm") ? (
-    <video
-      src={background}
-      autoPlay
-      loop
-      muted
-      playsInline
-      className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none"
-    />
-  ) : (
-    <img
-      src={background}
-      alt=""
-      className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none"
-      draggable={false}
-    />
-  )
-)}
-
-          {snap && (
-            <div
-              aria-hidden
-              className="absolute inset-0 pointer-events-none opacity-25"
-              style={{
-                backgroundImage:
-                  "linear-gradient(to right, rgba(255,255,255,0.18) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.18) 1px, transparent 1px)",
-                backgroundSize: `${GRID_STEP}% ${GRID_STEP}%`,
-              }}
-            />
-          )}
+          <Background src={background} />
 
           {layers.filter((l) => l.visible).map((layer) => (
             <InteractiveLayer
@@ -616,8 +614,8 @@ function PreviewCanvas({ layers, updateLayer, aspect, setAspect, background }: P
       {fullscreen && (
         <div className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4">
           <button
-            type="button"
-            onClick={() => setFullscreen(false)}
+            type="button"  
+          onClick={() => setFullscreen(false)}
             className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-card/80 backdrop-blur border border-border flex items-center justify-center text-foreground hover:bg-card transition-colors"
             title="Exit fullscreen (Esc)"
             aria-label="Exit fullscreen preview"
@@ -632,25 +630,8 @@ function PreviewCanvas({ layers, updateLayer, aspect, setAspect, background }: P
               isPortrait ? "h-full aspect-[9/16]" : "w-full aspect-video"
             }`}
           >
-            {background && (
-  background.startsWith("data:video") || background.endsWith(".mp4") || background.endsWith(".webm") ? (
-    <video
-      src={background}
-      autoPlay
-      loop
-      muted
-      playsInline
-      className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none"
-    />
-  ) : (
-    <img
-      src={background}
-      alt=""
-      className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none"
-      draggable={false}
-    />
-  )
-)}
+            <Background src={background} />
+            
             {layers.filter((l) => l.visible).map((layer) => {
               const zoom = layer.zoom ?? 100;
               const rotation = layer.rotation ?? 0;
