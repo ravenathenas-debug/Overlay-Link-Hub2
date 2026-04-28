@@ -59,12 +59,23 @@ export default function OverlayPage() {
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden">
       {config.background && (
-        <img
-          src={config.background}
-          alt=""
-          className="absolute inset-0 w-full h-full object-cover pointer-events-none"
-        />
-      )}
+  config.background.endsWith(".mp4") || config.background.endsWith(".webm") ? (
+    <video
+      src={config.background}
+      autoPlay
+      loop
+      muted
+      playsInline
+      className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+    />
+  ) : (
+    <img
+      src={config.background}
+      alt=""
+      className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+    />
+  )
+)}
       {config.layers.filter((l) => l.visible).map((layer) => {
         const zoom = layer.zoom ?? 100;
         const rotation = layer.rotation ?? 0;
