@@ -432,25 +432,16 @@ const GRID_STEP = 5;
 
 type Preset = "tl" | "tr" | "center" | "bl" | "br" | "fill";
 
-const Background = React.memo(({ src }: { src: string }) => {
-  if (!src) return null;
-
-  if (
-    src.startsWith("data:video") ||
-    src.endsWith(".mp4") ||
-    src.endsWith(".webm")
-  ) {
-    return (
-      <video
-        src={src}
-        autoPlay
-        loop
-        muted
-        playsInline
-        className="absolute inset-0 w-full h-full object-cover pointer-events-none"
-      />
-    );
-  }
+<video
+  src={src}
+  autoPlay
+  loop
+  muted
+  playsInline
+  controls={false}
+  preload="auto"
+  className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+/>
 
   return (
     <img
@@ -668,18 +659,31 @@ function PreviewCanvas({ layers, updateLayer, aspect, setAspect, background }: P
                     transformOrigin: "50% 50%",
                   }}
                 >
-                  <iframe
-                    src={layer.url}
-                    title={layer.label}
-                    className="border-none pointer-events-none absolute top-0 left-0"
-                    style={{
-                      width: `${10000 / zoom}%`,
-                      height: `${10000 / zoom}%`,
-                      transform: `scale(${zoom / 100})`,
-                      transformOrigin: "0 0",
-                      willChange: "transform",
-                    }}
-                  />
+                  {isVideoUrl(layer.url) ? (
+  <video
+    src={layer.url}
+    autoPlay
+    loop
+    muted
+    playsInline
+    controls={false}
+preload="auto"
+    className="absolute top-0 left-0 w-full h-full object-cover pointer-events-none"
+  />
+) : (
+  <iframe
+    src={layer.url}
+    title={layer.label}
+    className="border-none pointer-events-none absolute top-0 left-0"
+    style={{
+      width: `${10000 / (layer.zoom ?? 100)}%`,
+      height: `${10000 / (layer.zoom ?? 100)}%`,
+      transform: `scale(${(layer.zoom ?? 100) / 100})`,
+      transformOrigin: "0 0",
+      willChange: "transform",
+    }}
+  />
+)}
                 </div>
               );
             })}
@@ -716,7 +720,14 @@ const MIN_PCT = 4;
 function clamp(n: number, min: number, max: number) {
   return Math.max(min, Math.min(max, n));
 }
-
+const isVideoUrl = (url: string) => {
+  return (
+    url.endsWith(".mp4") ||
+    url.endsWith(".webm") ||
+    url.includes("video/upload") || // Cloudinary
+    url.includes("cdn.discordapp")
+  );
+};
 const InteractiveLayer = React.memo(function InteractiveLayer({
   layer,
   canvasRef,
@@ -930,18 +941,31 @@ frame.current = requestAnimationFrame(() => {
         className="absolute -top-3 left-1/2 -translate-x-1/2 w-px h-3 bg-primary/60 pointer-events-none"
       />
 
-      {/* iframe sits behind the drag surface */}
-      <iframe
-        src={layer.url}
-        className="opacity-80 pointer-events-none border-0 absolute top-0 left-0"
-        sandbox="allow-scripts allow-same-origin"
-        style={{
-          width: `${10000 / (layer.zoom ?? 100)}%`,
-          height: `${10000 / (layer.zoom ?? 100)}%`,
-          transform: `scale(${(layer.zoom ?? 100) / 100})`,
-          transformOrigin: "0 0",
-        }}
-      />
+      {/* media renderer */}
+{isVideoUrl(layer.url) ? (
+  <video
+    src={layer.url}
+    autoPlay
+    loop
+    muted
+    playsInline
+    controls={false}
+preload="auto"
+    className="absolute top-0 left-0 w-full h-full object-cover pointer-events-none"
+  />
+) : (
+  <iframe
+    src={layer.url}
+    className="opacity-80 pointer-events-none border-0 absolute top-0 left-0"
+    sandbox="allow-scripts allow-same-origin"
+    style={{
+      width: `${10000 / (layer.zoom ?? 100)}%`,
+      height: `${10000 / (layer.zoom ?? 100)}%`,
+      transform: `scale(${(layer.zoom ?? 100) / 100})`,
+      transformOrigin: "0 0",
+    }}
+  />
+)}
 
       {/* move surface — covers the full layer */}
       <div
