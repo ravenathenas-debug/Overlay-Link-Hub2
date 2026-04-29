@@ -428,28 +428,32 @@ type PreviewCanvasProps = {
   background: string;
 };
 
-const GRID_STEP = 5;
+const Background = React.memo(({ src }: { src: string }) => {
+  if (!src) return null;
 
-type Preset = "tl" | "tr" | "center" | "bl" | "br" | "fill";
+  const isVideo =
+    src.endsWith(".mp4") ||
+    src.endsWith(".webm") ||
+    src.includes("video");
 
-<video
-  src={src}
-  autoPlay
-  loop
-  muted
-  playsInline
-  controls={false}
-  preload="auto"
-  className="absolute inset-0 w-full h-full object-cover pointer-events-none"
-/>
-
-  return (
-    <img
-      src={src}
-      alt=""
-      className="absolute inset-0 w-full h-full object-cover pointer-events-none"
-    />
-  );
+  return isVideo ? (
+    <video
+      src={src}
+      autoPlay
+      loop
+      muted
+      playsInline
+      controls={false}
+      preload="auto"
+      className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+    />
+  ) : (
+    <img
+      src={src}
+      alt=""
+      className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+    />
+  );
 });
 function PreviewCanvas({ layers, updateLayer, aspect, setAspect, background }: PreviewCanvasProps) {
   const canvasRef = useRef<HTMLDivElement>(null);
