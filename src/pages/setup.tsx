@@ -48,18 +48,14 @@ export default function SetupPage() {
       });
       return;
     }
-    const reader = new FileReader();
-    reader.onload = () => {
-      const result = reader.result;
-      if (typeof result === "string") {
-        setBackground(result);
-        toast({ title: "Background loaded", description: file.name });
-      }
-    };
-    reader.onerror = () => {
-      toast({ title: "Failed to read file", variant: "destructive" });
-    };
-    reader.readAsDataURL(file);
+    const url = URL.createObjectURL(file);
+
+setBackground(url);
+
+toast({
+  title: "Background loaded",
+  description: file.name
+});
   };
 
   const setAspectAndSave = (next: Aspect) => {
@@ -182,16 +178,14 @@ export default function SetupPage() {
               )}
             </div>
             <input
-              ref={bgFileInputRef}
-              type="file"
-              accept="image/*,video/mp4,video,/webm"
-              className="hidden"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) handleBackgroundFile(file);
-                e.target.value = "";
-              }}
-            />
+  ref={bgFileInputRef}
+  type="file"
+  accept="image/*,video/mp4,video/webm"
+  onChange={(e) => {
+    const file = e.target.files[0];
+    handleBackgroundUpload(file);
+  }}
+/>
             <Button
               type="button"
               variant="secondary"
