@@ -1019,4 +1019,4 @@ frame.current = requestAnimationFrame(() => {
       </div>
     </div>
   );
-}
+});
