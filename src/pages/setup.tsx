@@ -430,7 +430,7 @@ type PreviewCanvasProps = {
 
 const Background = React.memo(({ src }: { src: string }) => {
   if (!src) return null;
-
+  
   const isVideo =
     src.endsWith(".mp4") ||
     src.endsWith(".webm") ||
@@ -455,6 +455,10 @@ const Background = React.memo(({ src }: { src: string }) => {
     />
   );
 });
+
+const GRID_STEP = 5;
+
+type Preset = "tl" | "tr" | "center" | "bl" | "br" | "fill";
 function PreviewCanvas({ layers, updateLayer, aspect, setAspect, background }: PreviewCanvasProps) {
   const canvasRef = useRef<HTMLDivElement>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
