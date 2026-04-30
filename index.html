@@ -8,6 +8,22 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<script>
+  const firebaseConfig = {
+  apiKey: "AIzaSyBsb5ZFREcQlEUvsJk4xIcPsAoQMTHawsI",
+  authDomain: "overlay-live-9474c.firebaseapp.com",
+  projectId: "overlay-live-9474c",
+  storageBucket: "overlay-live-9474c.firebasestorage.app",
+  messagingSenderId: "947875760313",
+  appId: "1:947875760313:web:335c0310be931c189bb368"
+};
+
+  firebase.initializeApp(firebaseConfig);
+  window.db = firebase.firestore();
+</script>
   </head>
   <body>
     <div id="root"></div>
