@@ -700,6 +700,7 @@ preload="auto"
   width: "100%",
   height: "100%",
   zoom: `${layer.zoom ?? 100}%`,
+      zIndex: 1,
 }}
     allow="autoplay; fullscreen"
   />
