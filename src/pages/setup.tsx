@@ -689,7 +689,7 @@ function PreviewCanvas({ layers, updateLayer, aspect, setAspect, background }: P
     playsInline
     controls={false}
 preload="auto"
-    className="absolute top-0 left-0 w-full h-full object-cover"
+    className="absolute top-0 left-0 w-full h-full object-cover pointer-events-none"
   />
 ) : (
   <iframe
