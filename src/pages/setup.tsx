@@ -697,10 +697,10 @@ preload="auto"
     title={layer.label}
     className="border-none absolute top-0 left-0"
     style={{
-  width: "100%",
-  height: "100%",
-  zoom: `${layer.zoom ?? 100}%`,
-      zIndex: 1,
+  width: `${10000 / (layer.zoom ?? 100)}%`,
+  height: `${10000 / (layer.zoom ?? 100)}%`,
+  transform: `scale(${(layer.zoom ?? 100) / 100})`,
+  transformOrigin: "0 0",
 }}
     allow="autoplay; fullscreen"
   />
