@@ -21,32 +21,25 @@ export default function OverlayPage() {
   }, []);
 
   useEffect(() => {
-    const searchParams = new URLSearchParams(window.location.search);
-    const compressed = searchParams.get("c");
+  const id = "live-overlay";
 
-    if (!compressed) {
-      setError("No configuration found. Generate a URL from Stack Overlay.");
-      return;
-    }
+  const unsubscribe = (window as any).db
+    .collection("overlays")
+    .doc(id)
+    .onSnapshot((doc: any) => {
+      const data = doc.data();
+      if (!data) return;
 
-    try {
-      const decompressed = LZString.decompressFromEncodedURIComponent(compressed);
-      if (!decompressed) throw new Error("Invalid format");
-      const parsed = JSON.parse(decompressed);
-      // Backward compat: old links encoded just an array of layers.
-      if (Array.isArray(parsed)) {
-        setConfig({ layers: parsed as Layer[] });
-      } else {
-        setConfig({
-          layers: (parsed.layers ?? []) as Layer[],
-          background: typeof parsed.background === "string" ? parsed.background : undefined,
-        });
-      }
-    } catch (err) {
-      setError("Failed to parse configuration.");
-      console.error(err);
-    }
-  }, []);
+      setConfig({
+        layers: data.layers || [],
+        background: data.background || undefined,
+      });
+
+      setError(null);
+    });
+
+  return () => unsubscribe();
+}, []);
 
   if (error) {
     return (
@@ -77,37 +70,51 @@ export default function OverlayPage() {
   )
 )}
       {config.layers.filter((l) => l.visible).map((layer) => {
-        const zoom = layer.zoom ?? 100;
-        const rotation = layer.rotation ?? 0;
-        return (
-          <div
-            key={layer.id}
-            className="absolute overflow-hidden pointer-events-none"
-            style={{
-              left: `${layer.x}%`,
-              top: `${layer.y}%`,
-              width: `${layer.width}%`,
-              height: `${layer.height}%`,
-              transform: `rotate(${rotation}deg)`,
-              transformOrigin: "50% 50%",
-            }}
-          >
-            <iframe
-              src={layer.url}
-              className="border-none pointer-events-none absolute top-0 left-0"
-              style={{
-                width: `${10000 / zoom}%`,
-                height: `${10000 / zoom}%`,
-                transform: `scale(${zoom / 100})`,
-                transformOrigin: "0 0",
-                background: "transparent",
-              }}
-              allow="autoplay"
-              allowTransparency
-            />
-          </div>
-        );
-      })}
+  const zoom = layer.zoom ?? 100;
+  const rotation = layer.rotation ?? 0;
+
+  const isVideo =
+    layer.url.endsWith(".mp4") ||
+    layer.url.endsWith(".webm") ||
+    layer.url.includes("video") ||
+    layer.url.includes("cdn.discordapp");
+
+  return (
+    <div
+      key={layer.id}
+      className="absolute overflow-hidden pointer-events-none"
+      style={{
+        left: `${layer.x}%`,
+        top: `${layer.y}%`,
+        width: `${layer.width}%`,
+        height: `${layer.height}%`,
+        transform: `rotate(${rotation}deg)`,
+        transformOrigin: "50% 50%",
+      }}
+    >
+      {isVideo ? (
+        <video
+          src={layer.url}
+          autoPlay
+          loop
+          muted
+          playsInline
+          controls={false}
+          preload="auto"
+          className="absolute top-0 left-0 w-full h-full object-cover pointer-events-none"
+        />
+      ) : (
+        <iframe
+          src={layer.url}
+          className="border-none pointer-events-none absolute top-0 left-0"
+          style={{
+            width: `${10000 / zoom}%`,
+            height: `${10000 / zoom}%`,
+            transform: `scale(${zoom / 100})`,
+            transformOrigin: "0 0",
+          }}
+        />
+      )}
     </div>
   );
-}
+})}
