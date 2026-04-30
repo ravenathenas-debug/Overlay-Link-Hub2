@@ -113,7 +113,7 @@ useEffect(() => {
 
   const id = "live-overlay"; // you can change this later
 
-  window.db
+  (window as any).db
     .collection("overlays")
     .doc(id)
     .set({
