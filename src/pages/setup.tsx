@@ -669,17 +669,17 @@ function PreviewCanvas({ layers, updateLayer, aspect, setAspect, background }: P
               const rotation = layer.rotation ?? 0;
               return (
                 <div
-                  key={layer.id}
-                  className="absolute overflow-hidden pointer-events-none"
-                  style={{
-                    left: `${layer.x}%`,
-                    top: `${layer.y}%`,
-                    width: `${layer.width}%`,
-                    height: `${layer.height}%`,
-                    transform: `rotate(${rotation}deg)`,
-                    transformOrigin: "50% 50%",
-                  }}
-                >
+  key={layer.id}
+  className="absolute overflow-hidden"
+  style={{
+    left: `${layer.x}%`,
+    top: `${layer.y}%`,
+    width: `${layer.width}%`,
+    height: `${layer.height}%`,
+    transform: `rotate(${rotation}deg)`,
+    transformOrigin: "50% 50%",
+  }}
+>
                   {isVideoUrl(layer.url) ? (
   <video
     src={layer.url}
@@ -689,20 +689,19 @@ function PreviewCanvas({ layers, updateLayer, aspect, setAspect, background }: P
     playsInline
     controls={false}
 preload="auto"
-    className="absolute top-0 left-0 w-full h-full object-cover pointer-events-none"
+    className="absolute top-0 left-0 w-full h-full object-cover"
   />
 ) : (
   <iframe
     src={layer.url}
     title={layer.label}
-    className="border-none pointer-events-none absolute top-0 left-0"
+    className="border-none absolute top-0 left-0"
     style={{
-      width: `${10000 / (layer.zoom ?? 100)}%`,
-      height: `${10000 / (layer.zoom ?? 100)}%`,
-      transform: `scale(${(layer.zoom ?? 100) / 100})`,
-      transformOrigin: "0 0",
-      willChange: "transform",
-    }}
+  width: "100%",
+  height: "100%",
+  zoom: `${layer.zoom ?? 100}%`,
+}}
+    allow="autoplay; fullscreen"
   />
 )}
                 </div>
