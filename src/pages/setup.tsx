@@ -108,7 +108,20 @@ toast({
     setNewUrl("");
     setNewLabel("");
   };
+useEffect(() => {
+  if (!layers.length) return;
 
+  const id = "live-overlay"; // you can change this later
+
+  window.db
+    .collection("overlays")
+    .doc(id)
+    .set({
+      layers,
+      background: background || null,
+      updatedAt: Date.now(),
+    });
+}, [layers, background]);
   const generatedUrl = useMemo(() => {
     if (layers.length === 0 && !background) return "";
     const payload = JSON.stringify({ layers, background: background || undefined });
